@@ -1,5 +1,19 @@
-from .linear_clf import LinearClf
+# import all classes from the scripts in this folder
+import os
 
-all_models = {
-    'LinearClf':LinearClf,
-}
+# get list of modules
+modules = os.listdir(os.path.dirname(__file__))
+
+#import all classes from modules
+for module in modules:
+    if module == '__init__.py' or module[-3:] != '.py':
+        continue
+
+    path2module = "src.models." + module[:-3]
+
+    __import__(path2module, locals(), globals())
+    exec(f"from {path2module} import *")
+
+# all_models = {
+#     'LinearClf':LinearClf,
+# }
