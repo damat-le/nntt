@@ -16,12 +16,14 @@ import src.models
 set_float32_matmul_precision('medium')
 
 # Parse command line arguments
-parser = argparse.ArgumentParser(description='Generic runner for VAE models')
-parser.add_argument('--config',  '-c',
-                    dest="filename",
-                    metavar='FILE',
-                    help =  'path to the config file',
-                    default='configs/vae.yaml')
+parser = argparse.ArgumentParser(description='Generic runner for torch models')
+parser.add_argument(
+    '--config',  '-c',
+    dest="filename",
+    metavar='FILE',
+    help =  'Path to the config file',
+    default='configs/example.json'
+)
 
 # Read config file
 args = parser.parse_args()
@@ -32,15 +34,15 @@ with open(args.filename, 'r') as file:
 model_class = getattr(
     src.models,
     config['model_params']['name']
-    )
+)
 datamodule_class = getattr(
     src.datasets,
     config['data_params']['datamodule_name']
-    )
+)
 experiment_class = getattr(
     src.experiments,
     config['exp_params']['lightningmodule_name']
-    )
+)
 
 # Initialize torch_model, datamodule and lightningmodule
 model = model_class(**config['model_params'])
@@ -60,22 +62,25 @@ tb_logger.log_hyperparams(config)
 seed_everything(
     config['exp_params']['manual_seed'], 
     True
-    )
+)
 
 runner = Trainer(
+    enable_model_summary=True,
     logger=tb_logger,
+    #fast_dev_run=True,
     #log_every_n_steps=25,
     callbacks=[
         LearningRateMonitor(),
         ModelCheckpoint(
-            save_top_k=2, 
-            dirpath =os.path.join(tb_logger.log_dir , "checkpoints"), 
-            monitor= "val_loss",
-            save_last= True),
-        ],
+            save_top_k=1, 
+            dirpath=os.path.join(tb_logger.log_dir , "checkpoints"), 
+            monitor="val_loss",
+            save_last=True
+        ),
+    ],
     #strategy=DDPStrategy(find_unused_parameters=False),
     **config['trainer_params']
-    )
+)
 
 print(f"======= Training {config['model_params']['name']} =======")
 data.setup()
