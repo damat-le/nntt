@@ -4,19 +4,21 @@
     },
     "data_params": {
         "path": "data/xor_dataset.csv",
-        "datamodule_name": "XorDataModule",
+        "dataset_name": "XorDataset",
+        "datamodule_name": "BaseDataModule",
         "train_val_test_split": [
             30000,
             40000
         ],
-        "train_batch_size": 64,
-        "val_batch_size": 32,
-        "test_batch_size": 32,
-        "patch_size": 32,
+        "train_batch_size": 1024,
+        "val_batch_size": 1024,
+        "test_batch_size": 1024,
+        "predict_batch_size": 4096,
+        "patch_size": 1024,
         "num_workers": 12
     },
     "exp_params": {
-        "lightningmodule_name": "XorExperiment",
+        "lightningmodule_name": "BaseExp",
         "LR": 0.0005,
         "weight_decay": 0.9,
         "scheduler_gamma": 0.9,

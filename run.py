@@ -35,6 +35,10 @@ model_class = getattr(
     src.models,
     config['model_params']['name']
 )
+dataset_class = getattr(
+    src.datasets,
+    config['data_params']['dataset_name']
+)
 datamodule_class = getattr(
     src.datasets,
     config['data_params']['datamodule_name']
@@ -49,6 +53,7 @@ model = model_class(**config['model_params'])
 experiment = experiment_class(model, config['exp_params'])
 data = datamodule_class(
     **config['data_params'], 
+    torch_dataset_class=dataset_class,
     pin_memory=len(config['trainer_params']['devices']) != 0
 )
 
